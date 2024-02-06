@@ -1,0 +1,12 @@
+{
+"students":[{
+	"name":"mohammed",
+	"city":"baha",
+	"country":"ksa"
+
+},
+{	"name":"zahowa",
+	"city":"cairo",
+	"country":"egypt"
+}]
+}
