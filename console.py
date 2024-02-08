@@ -40,5 +40,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
         elif line not in classes_names:
             print("** class doesn't exist **")
+    def do_show(self,line):
+        classes_names = globals()
+        if line in classes_names:
+            obj = classes_names[line]()
+            print(obj)
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
