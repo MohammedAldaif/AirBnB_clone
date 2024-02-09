@@ -146,5 +146,8 @@ class HBNBCommand(cmd.Cmd):
                 return True
 
         return False
+    def do_all(self, arg):
+        if arg in HBNBCommand.__classes:
+            print(arg)
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
