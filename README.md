@@ -1,1 +1,1 @@
-AirBnB clone - The console
+We are constructing the fundamental backend for the AirBnb project.
