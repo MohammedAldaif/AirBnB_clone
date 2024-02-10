@@ -92,20 +92,19 @@ class HBNBCommand(cmd.Cmd):
             classes_names = globals()
             if line in classes_names:
                 class_instances = [
-                    obj.to_dict() for obj in file_storage.all().values()
-                    if obj.__class__.__name__ == line
-                ]
+                f"[{obj.__class__.__name__}] ({obj.id}) {obj.to_dict()}" for obj in file_storage.all().values()
+                if obj.__class__.__name__ == line
+            ]
                 obj_list = class_instances
             else:
                 print("** class doesn't exist **")
                 return
-
         if obj_list:
-            for obj_dict in obj_list:
-                print(str(obj_dict))
+            print(obj_list)
         else:
             print("** no instance found **")
-    def do_update(self,line):
+
+    def do_update(self, line):
         tokens = line.split()
         classes_names = globals()
         if not tokens:
@@ -115,13 +114,34 @@ class HBNBCommand(cmd.Cmd):
         elif len(tokens) < 2:
             print("** instance id missing **")
         elif len(tokens) > 4:
-            print("Only one attribute can be updated at the time")
-        elif not self.instance_exists(tokens[0],tokens[1]):
+            print("Only one attribute can be updated at a time")
+        elif not self.instance_exists(tokens[0], tokens[1]):
             print("** no instance found **")
         elif len(tokens) < 3 or not tokens[2]:
             print("** attribute name missing **")
-        file_storage = FileStorage()
-        file_storage.reload()  # Load objects from the JSON file
+        else:
+            class_name = tokens[0]
+            instance_id = tokens[1]
+            attribute_name = tokens[2]
+            new_value = tokens[3]
+
+            file_storage = FileStorage()
+            file_storage.reload()  # Load objects from the JSON file
+
+            key = f"{class_name}.{instance_id}"
+            if key in file_storage.all():
+                instance = file_storage.all()[key]
+                setattr(instance, attribute_name, new_value)
+            else:
+                # Create a new instance with the given class and id
+                cls = globals()[class_name]
+                instance = cls()
+                instance.id = instance_id
+                setattr(instance, attribute_name, new_value)
+
+            # Save the updated or new instance
+            instance.save()
+
     def instance_exists(self, class_name, obj_id):
         """
         Check if an instance of the given class and ID exists.
@@ -146,8 +166,5 @@ class HBNBCommand(cmd.Cmd):
                 return True
 
         return False
-    def do_all(self, arg):
-        if arg in HBNBCommand.__classes:
-            print(arg)
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

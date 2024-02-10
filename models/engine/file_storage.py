@@ -36,7 +36,6 @@ class FileStorage:
             save_dict[key] = value.to_dict()
         with open(FileStorage.__file_path, 'w') as f:
             json.dump(save_dict, f)
-
     def reload(self):
         """
         convert json file to __objects, if __objects exists, otherwise do nothing.
@@ -51,3 +50,6 @@ class FileStorage:
                     FileStorage.__objects[key] = obj
         except FileNotFoundError:
             pass
+        except json.decoder.JSONDecodeError:
+        # handles the case where the file is empty or not valid JSON
+            print("File is empty or not valid JSON. No objects loaded.")
