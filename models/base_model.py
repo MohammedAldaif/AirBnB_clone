@@ -6,6 +6,7 @@ Module for the BaseModel class
 import uuid
 from datetime import datetime
 
+
 class BaseModel:
     """
     define the attributes and methods for all other classes
@@ -25,8 +26,10 @@ class BaseModel:
             for key, value in kwargs.items():
                 if key == '__class__':
                     continue
-                elif key == 'created_at' or key == 'updated_at':
-                    setattr(self, key, datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f'))
+                elif key == 'created_at' or
+                key == 'updated_at':
+                    setattr(self, key, datetime.strptime
+                            (value, '%Y-%m-%dT%H:%M:%S.%f'))
                 else:
                     setattr(self, key, value)
 
@@ -34,7 +37,8 @@ class BaseModel:
         """
         this method returns a string representation of BaseModel
         """
-        return ("[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__))
+        return ("[{}] ({}) {}".format(self.__class__.__name__,
+                self.id, self.__dict__))
 
     def save(self):
         """
@@ -46,7 +50,8 @@ class BaseModel:
 
     def to_dict(self):
         """
-        this method returns a dictionary containing all keys/values of __dict__ of the instance
+        this method returns a dictionary containing
+        all keys/values of __dict__ of the instance
         """
         obj_dict = self.__dict__.copy()
         obj_dict['__class__'] = self.__class__.__name__

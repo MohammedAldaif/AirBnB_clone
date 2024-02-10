@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 class User(BaseModel):
     def init(self, email, password, first_name, last_name):
         self.email = str(email)

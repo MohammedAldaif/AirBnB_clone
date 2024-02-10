@@ -6,6 +6,7 @@ Module for the FileStorage class
 import json
 from models.base_model import BaseModel
 
+
 class FileStorage:
     """
     this class is for converting instances to a json file
@@ -36,20 +37,23 @@ class FileStorage:
             save_dict[key] = value.to_dict()
         with open(FileStorage.__file_path, 'w') as f:
             json.dump(save_dict, f)
+
     def reload(self):
         """
-        convert json file to __objects, if __objects exists, otherwise do nothing.
+        convert json file to __objects,
+        if __objects exists, otherwise do nothing.
         """
         try:
             with open(FileStorage.__file_path, 'r') as f:
                 load_dict = json.load(f)
                 for key, value in load_dict.items():
                     class_name, obj_id = key.split('.')
-                    cls = eval(class_name)  # Convert class name to class object
+                    cls = eval(class_name)
+                    # Convert class name to class object
                     obj = cls(**value)
                     FileStorage.__objects[key] = obj
         except FileNotFoundError:
             pass
         except json.decoder.JSONDecodeError:
-        # handles the case where the file is empty or not valid JSON
+            # handles the case where the file is empty or not valid JSON
             print("File is empty or not valid JSON. No objects loaded.")
