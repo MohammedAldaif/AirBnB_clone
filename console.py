@@ -12,21 +12,27 @@ entry point for the interpreter
 
 class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb)"
-    def do_EOF(self,line):
+
+    def do_EOF(self, line):
+
         ''' quit the interprete when the user presses ctrl + d '''
         return True
-    def do_quit(self,line):
+
+    def do_quit(self, line):
         ''' quit the interpreter when the user types quit '''
         return True
+
     def emptyline(self):
+
         ''' override the origianal method to make it return nothing
         when the user press enter and the input line is empty '''
         pass
-    def do_create(self,line):
+
+    def do_create(self, line):
         classes_names = globals()
         if line in classes_names:
             obj = classes_names[line]()
-            obj_dictionary = obj.to_dict() 
+            obj_dictionary = obj.to_dict()
             file_storage_object = FileStorage()
             file_storage_object.new(obj)
             file_storage_object.save()
@@ -40,6 +46,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
         elif line not in classes_names:
             print("** class doesn't exist **")
+
     def do_show(self, line):
         tokens = line.split()
         classes_names = globals()
@@ -57,8 +64,10 @@ class HBNBCommand(cmd.Cmd):
             obj_dict = file_storage.all().get(f"{tokens[0]}.{tokens[1]}", None)
             if obj_dict:
                 print(obj_dict)
+
             else:
                 print("** no instance found **")
+
     def do_destroy(self, line):
         tokens = line.split()
         classes_names = globals()
@@ -77,9 +86,12 @@ class HBNBCommand(cmd.Cmd):
             if obj_dict:
                 key = f"{tokens[0]}.{tokens[1]}"
                 del file_storage.all()[key]
+
                 file_storage.save()
             else:
+
                 print("** no instance found **")
+
     def do_all(self, line):
         file_storage = FileStorage()
         file_storage.reload()  # Load objects from the JSON file
@@ -92,9 +104,10 @@ class HBNBCommand(cmd.Cmd):
             classes_names = globals()
             if line in classes_names:
                 class_instances = [
-                f"[{obj.__class__.__name__}] ({obj.id}) {obj.to_dict()}" for obj in file_storage.all().values()
-                if obj.__class__.__name__ == line
-            ]
+                        f"[{obj.__class__.__name__}]({obj.id})
+                        {obj.to_dict()}"for obj in file_storage.all().values()
+                        if obj.__class__.__name__ == line
+                        ]
                 obj_list = class_instances
             else:
                 print("** class doesn't exist **")
@@ -150,6 +163,7 @@ class HBNBCommand(cmd.Cmd):
         file_storage.reload()
         key = f"{class_name}.{obj_id}"
         return key in file_storage.all()
+
     def attribute_exists(self, class_name, attribute_name):
         """
         Check if the attribute exists in the JSON file for the given class.
@@ -166,5 +180,7 @@ class HBNBCommand(cmd.Cmd):
                 return True
 
         return False
+
+
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
