@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr / bin / python3
 #comment
 
 '''
@@ -13,6 +13,8 @@ class BaseModel:
     """
     define the attributes and methods for all other classes
     """
+
+
     def __init__(self, *args, **kwargs):
         """
         this method got executed each time an object of this class is created
@@ -29,9 +31,12 @@ class BaseModel:
                 if key == '__class__':
                     continue
                 elif key == 'created_at' or key == 'updated_at':
-                    setattr(self, key, datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%f'))
+                    setattr(self , key ,
+                            datetime.strptime(value , ' % Y - % m
+                            - % dT % H : % M : % S. % f'))
                 else:
                     setattr(self, key, value)
+
 
     def __str__(self):
         """
@@ -39,6 +44,7 @@ class BaseModel:
         """
         return ("[{}] ({}) {}".format(self.__class__.__name__,
                 self.id, self.__dict__))
+
 
     def save(self):
         """
@@ -48,10 +54,11 @@ class BaseModel:
         self.updated_at = datetime.now()
         storage.save()
 
+
     def to_dict(self):
         """
         this method returns a dictionary containing
-        all keys/values of __dict__ of the instance
+        all keys / values of __dict__ of the instance
         """
         obj_dict = self.__dict__.copy()
         obj_dict['__class__'] = self.__class__.__name__
