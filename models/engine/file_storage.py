@@ -12,7 +12,7 @@ class FileStorage:
     this class is for converting instances to a json file
     and converting json file to instances
     """
-    __file_path = "file.json"
+    __file_path = "test.json"
     __objects = {}
 
     def all(self):
