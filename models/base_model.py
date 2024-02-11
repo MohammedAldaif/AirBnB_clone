@@ -1,11 +1,13 @@
 #!/usr/bin/python3
-"""
+#comment
+
+'''
 Module for the BaseModel class
-"""
+'''
+
 
 import uuid
 from datetime import datetime
-
 
 class BaseModel:
     """
@@ -56,3 +58,7 @@ class BaseModel:
         obj_dict['created_at'] = self.created_at.isoformat()
         obj_dict['updated_at'] = self.updated_at.isoformat()
         return obj_dict
+# Set the module docstring explicitly
+__import__("models.base_model").__doc__ = """
+This module defines the BaseModel class.
+"""

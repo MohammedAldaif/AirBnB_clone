@@ -25,17 +25,16 @@ class HBNBCommand(cmd.Cmd):
     def do_help(self, arg):
         """Get help for a command.
         """
-        doc_string = DocStrings()
         if arg == "all":
-            print(doc_string.help_all(self))
+            print(doc_string.help_all())
         elif arg == "create":
-            print(doc_string.help_create(self))
+            print(doc_string.help_create())
         elif arg == "destroy":
-            print(doc_string.help_destroy(self))
+            print(doc_string.help_destroy())
         elif arg == "show":
-            print(doc_string.help_show(self))
+            print(doc_string.help_show())
         elif arg == "update":
-            print(doc_string.help_update(self))
+            print(doc_string.help_update())
         else:
             super().do_help(arg)
     def do_create(self,line):
@@ -184,3 +183,4 @@ class HBNBCommand(cmd.Cmd):
         return False
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
+
