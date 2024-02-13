@@ -18,7 +18,6 @@ class User(BaseModel):
         self.password = ''
         self.first_name = ''
         self.last_name = ''
-
     def __str__(self):
         """
         str method for the user class

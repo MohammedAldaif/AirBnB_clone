@@ -2,9 +2,12 @@
 """
 Module for the FileStorage class
 """
-
+import sys
+import os
 import json
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../')
 from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage:
@@ -12,7 +15,7 @@ class FileStorage:
     this class is for converting instances to a json file
     and converting json file to instances
     """
-    __file_path = "test.json"
+    __file_path = "file.json"
     __objects = {}
 
     def all(self):

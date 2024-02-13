@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../')
 import json
 import cmd
 from models.base_model import BaseModel
+from models.user import User
 from models.engine.file_storage import FileStorage
 from docstrings import DocStrings
 
@@ -144,6 +148,8 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
         elif len(tokens) < 3 or not tokens[2]:
             print("** attribute name missing **")
+        elif len(tokens) < 4:
+            print("** value missing **")
         else:
             class_name = tokens[0]
             instance_id = tokens[1]
