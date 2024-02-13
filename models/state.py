@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+from models import BaseModel
+
+
 class state(BaseModel):
-    def init(self, name):
-        self.name = str(name)
+    """state class"""
+    def __init__(self):
+        self.name = ''

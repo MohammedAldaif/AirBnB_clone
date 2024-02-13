@@ -1,6 +1,7 @@
 #!/usr/bin/python3
+
+
 class city(BaseModel):
-    def init(self, state_id):
-        self.state_id = str(state_id)
-
-
+    def __init__(self):
+        self.name = ''
+        self.state_id = ''
