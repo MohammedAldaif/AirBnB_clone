@@ -1,209 +1,116 @@
 #!/usr/bin/python3
-
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../')
-import json
 import cmd
+from models import storage
 from models.base_model import BaseModel
-from models.user import User
-from models.engine.file_storage import FileStorage
-from docstrings import DocStrings
-
-'''
-entry point for the interpreter
-'''
-
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 class HBNBCommand(cmd.Cmd):
-    prompt = "(hbnb)"
+    prompt = "(hbnb) "
 
-    def do_EOF(self, line):
-        ''' quit the interpreter when the user presses ctrl + d '''
+    def do_quit(self, arg):
+        """Quit command to exit the program"""
         return True
 
-    def do_quit(self, line):
-        ''' quit the interpreter when the user types quit '''
+    def do_EOF(self, arg):
+        """EOF command to exit the program"""
         return True
 
     def emptyline(self):
-        ''' override the original method to make it return nothing
-        when the user presses enter and the input line is empty '''
+        """Called when an empty line is entered"""
         pass
 
-    def do_help(self, arg):
-        """Get help for a command.
-        """
-        if arg == "all":
-            print(doc_string.help_all())
-        elif arg == "create":
-            print(doc_string.help_create())
-        elif arg == "destroy":
-            print(doc_string.help_destroy())
-        elif arg == "show":
-            print(doc_string.help_show())
-        elif arg == "update":
-            print(doc_string.help_update())
-        else:
-            super().do_help(arg)
-
-    def do_create(self, line):
-        classes_names = globals()
-        if line in classes_names:
-            obj = classes_names[line]()
-            obj_dictionary = obj.to_dict()
-            file_storage_object = FileStorage()
-            file_storage_object.new(obj)
-            file_storage_object.save()
-            # Print the 'id' from the saved JSON file
-            with open(FileStorage._FileStorage__file_path, 'r') as json_file:
-                loaded_dict = json.load(json_file)
-                key = "{}.{}".format(obj.__class__.__name__, obj.id)
-                if key in loaded_dict:
-                    print(loaded_dict[key]['id'])
-        elif not line:
+    def do_create(self, arg):
+        """Creates a new instance of BaseModel, saves it, and prints the id"""
+        if not arg:
             print("** class name missing **")
-        elif line not in classes_names:
+            return
+        try:
+            new_instance = eval(arg)()
+            new_instance.save()
+            print(new_instance.id)
+        except NameError:
             print("** class doesn't exist **")
 
-    def do_show(self, line):
-        tokens = line.split()
-        classes_names = globals()
-
-        if not tokens:
+    def do_show(self, arg):
+        """Prints the string representation of an instance"""
+        if not arg:
             print("** class name missing **")
-        elif tokens[0] not in classes_names:
+            return
+        args = arg.split()
+        if args[0] not in globals():
             print("** class doesn't exist **")
-        elif len(tokens) < 2:
+            return
+        if len(args) < 2:
             print("** instance id missing **")
-        elif tokens[0] in classes_names:
-            file_storage = FileStorage()
-            file_storage.reload()  # Load objects from the JSON file
-
-            obj_dict = file_storage.all().get(f"{tokens[0]}.{tokens[1]}", None)
-            if obj_dict:
-                print(obj_dict)
-            else:
-                print("** no instance found **")
-
-    def do_destroy(self, line):
-        tokens = line.split()
-        classes_names = globals()
-
-        if not tokens:
-            print("** class name missing **")
-        elif tokens[0] not in classes_names:
-            print("** class doesn't exist **")
-        elif len(tokens) < 2:
-            print("** instance id missing **")
-        elif tokens[0] in classes_names:
-            file_storage = FileStorage()
-            file_storage.reload()  # Load objects from the JSON file
-
-            obj_dict = file_storage.all().get(f"{tokens[0]}.{tokens[1]}", None)
-            if obj_dict:
-                key = f"{tokens[0]}.{tokens[1]}"
-                del file_storage.all()[key]
-                file_storage.save()
-            else:
-                print("** no instance found **")
-
-    def do_all(self, line):
-        file_storage = FileStorage()
-        file_storage.reload()  # Load objects from the JSON file
-
-        if not line:
-            # If no class name is provided, print all instances
-            obj_list = list(file_storage.all().values())
+            return
+        key = "{}.{}".format(args[0], args[1])
+        all_objs = storage.all()
+        if key in all_objs:
+            print(all_objs[key])
         else:
-            # If a class name is provided, filter instances by class name
-            classes_names = globals()
-            if line in classes_names:
-                class_instances = [
-                    f"[{obj.__class__.__name__}] ({obj.id}){obj.to_dict()}"
-                    for obj in file_storage.all().values()
-                    if obj.__class__.__name__ == line
-                ]
-                obj_list = class_instances
-            else:
+            print("** no instance found **")
+
+    def do_destroy(self, arg):
+        """Deletes an instance based on the class name and id"""
+        if not arg:
+            print("** class name missing **")
+            return
+        args = arg.split()
+        if args[0] not in globals():
+            print("** class doesn't exist **")
+            return
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+        key = "{}.{}".format(args[0], args[1])
+        all_objs = storage.all()
+        if key in all_objs:
+            del all_objs[key]
+            storage.save()
+        else:
+            print("** no instance found **")
+
+    def do_all(self, arg):
+        """Prints all string representations of all instances"""
+        all_objs = storage.all()
+        if not arg:
+            print([str(obj) for obj in all_objs.values()])
+        else:
+            args = arg.split()
+            if args[0] not in globals():
                 print("** class doesn't exist **")
                 return
-        if obj_list:
-            print(obj_list)
-        else:
-            print("** no instance found **")
+            print([str(obj) for key, obj in all_objs.items() if key.startswith(args[0])])
 
-    def do_update(self, line):
-        tokens = line.split()
-        classes_names = globals()
-        if not tokens:
+    def do_update(self, arg):
+        """Updates an instance based on the class name and id"""
+        if not arg:
             print("** class name missing **")
-        elif tokens[0] not in classes_names:
+            return
+        args = arg.split()
+        if args[0] not in globals():
             print("** class doesn't exist **")
-        elif len(tokens) < 2:
+            return
+        if len(args) < 2:
             print("** instance id missing **")
-        elif len(tokens) > 4:
-            print("Only one attribute can be updated at a time")
-        elif not self.instance_exists(tokens[0], tokens[1]):
+            return
+        key = "{}.{}".format(args[0], args[1])
+        all_objs = storage.all()
+        if key not in all_objs:
             print("** no instance found **")
-        elif len(tokens) < 3 or not tokens[2]:
+            return
+        if len(args) < 3:
             print("** attribute name missing **")
-        elif len(tokens) < 4:
+            return
+        if len(args) < 4:
             print("** value missing **")
-        else:
-            class_name = tokens[0]
-            instance_id = tokens[1]
-            attribute_name = tokens[2]
-            new_value = tokens[3]
-
-            file_storage = FileStorage()
-            file_storage.reload()  # Load objects from the JSON file
-
-            key = f"{class_name}.{instance_id}"
-            if key in file_storage.all():
-                instance = file_storage.all()[key]
-                setattr(instance, attribute_name, new_value)
-            else:
-                # Create a new instance with the given class and id
-                cls = globals()[class_name]
-                instance = cls()
-                instance.id = instance_id
-                setattr(instance, attribute_name, new_value)
-
-            # Save the updated or new instance
-            instance.save()
-
-    def instance_exists(self, class_name, obj_id):
-        """
-        Check if an instance of the given class and ID exists.
-        """
-        file_storage = FileStorage()
-        file_storage.reload()
-        key = f"{class_name}.{obj_id}"
-        return key in file_storage.all()
-
-    def attribute_exists(self, class_name, attribute_name):
-        """
-        Check if the attribute exists in the JSON file for the given class.
-        """
-        file_storage = FileStorage()
-        file_storage.reload()
-        instances = file_storage.all().values()
-
-        for instance in instances:
-            if (
-                    instance.__class__.__name__ == class_name
-                    and hasattr(instance, attribute_name)
-            ):
-                return True
-
-        return False
-
-
-# Set the module docstring explicitly
-__import__("console").__doc__ = """
-This module defines the HBNBCommand class.
-"""
+            return
+        setattr(all_objs[key], args[2], args[3])
+        storage.save()
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
