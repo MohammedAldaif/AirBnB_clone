@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+from models.base_model import BaseModel
 
-def init(self, name):
-    self.name = str(name)
+class Amenity(BaseModel):
+    """Amenity class"""
+    name = ""

@@ -1,6 +1,6 @@
-#!/usr/bin/python3
-class city(BaseModel):
-    def init(self, state_id):
-        self.state_id = str(state_id)
+from models.base_model import BaseModel
 
-
+class City(BaseModel):
+    """City class"""
+    state_id = ""
+    name = ""
